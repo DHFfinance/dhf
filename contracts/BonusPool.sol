@@ -50,7 +50,6 @@ contract BonusPool is EmptyContract {
     error ErrorCallerNot();
     error ErrorCallerNotRootManager();
     error ErrorAddressZero();
-    error ErrorRewardType();
     error ErrorAlreadyClaimed();
     error ErrorClaimedEpoch();
     error ErrorInvalidProof();
@@ -151,7 +150,7 @@ contract BonusPool is EmptyContract {
         bytes32[] calldata merkleProof_
     ) external {
         bytes32 root_ = merkleData.merkleRoot;
-        if (root_ == "") revert ErrorRewardType();
+        if (root_ == "") revert ErrorMerkleRootEmpty();
         address account_ = msg.sender;
         uint256 claimedAmt_ = merkleClaimedAmounts[account_];
         if (claimedAmt_ >= totalAmount_) revert ErrorAlreadyClaimed();
