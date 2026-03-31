@@ -92,6 +92,7 @@ contract NFTPresell is ERC721Holder, EmptyContract {
     error ErrorNodeError();
     error ErrorWhiteList();
     error ErrorPayTokenNotUSDT();
+    error ErrorDuplicatedRewardType();
 
     modifier onlyBonusPool() {
         if(msg.sender != BONUSPOOL) revert ErrorCaller();
@@ -428,6 +429,9 @@ contract NFTPresell is ERC721Holder, EmptyContract {
         uint256 len_ = nodeConfigs_.length;
         for(uint256 i=0;i<len_;i++) {
             if (nodeConfigs_[i].payToken != USDT) revert ErrorPayTokenNotUSDT();
+            if (nodeConfigs_[i].nType == _SMALLTYPE && nodeConfigs_[i].nodeId != _SMALLNODEID) revert ErrorDuplicatedRewardType();
+            if (nodeConfigs_[i].nType == _DAOTYPE && nodeConfigs_[i].nodeId != _DAONODEID) revert ErrorDuplicatedRewardType();
+
             nodeConfigs[nodeConfigs_[i].nodeId] = NodeConfig(
                 nodeConfigs_[i].payToken,
                 nodeConfigs_[i].payAmount,
