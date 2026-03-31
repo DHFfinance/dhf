@@ -245,14 +245,21 @@ contract TokenX is ERC20, ERC20Permit, AccessControl {
         path_[1] = WBNB;
 
         uint256 valueBefore_ = recipient_.balance;
+        uint256 minAmount_ = _getTokenPrice(LP_TOKEN_BNB, address(this), amount_) * 94 / 100;
         SWAPROUTER.swapExactTokensForETHSupportingFeeOnTransferTokens(
             amount_,
-            0,
+            minAmount_,
             path_,
             recipient_,
             block.timestamp
         );
         return recipient_.balance - valueBefore_;
+    }
+
+    function _getTokenPrice(address lp_, address tokenIn_, uint256 amount_) internal view returns (uint256) {
+        address token0 = IPool(lp_).token0();
+        (uint256 reserveA, uint256 reserveB, ) = IPool(lp_).getReserves();
+        return tokenIn_ == token0 ? amount_ * reserveB / reserveA : amount_ * reserveA / reserveB;
     }
 
     uint256 public index;
