@@ -208,7 +208,7 @@ contract BonusPool is EmptyContract {
 
     function allotBonus(uint256 amount_) external payable onlyToken {
         uint256 smallAmount_ = amount_ * 3 / 28; // 0.3%
-        uint256 daoAmount_ = amount_ * 5 / 28; // 0.3%
+        uint256 daoAmount_ = amount_ * 5 / 28; // 0.5%
         INFTPresell(NFTPRESELL).notifySwapFeeRewards(smallAmount_, daoAmount_);
 
         uint256 marketAmount_ = amount_ * 15 / 28; // 1.5%
