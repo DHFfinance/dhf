@@ -128,7 +128,7 @@ contract BonusPool is EmptyContract {
 
     function claimHold() external {
         address user_ = msg.sender;
-        if (IERC20TokenX(XTOKEN).balanceOf(user_) <= CLAIM_MIN_HOLD)
+        if (IERC20TokenX(XTOKEN).balanceOf(user_) < CLAIM_MIN_HOLD)
             revert ErrorHoldTooLittle();
 
         IERC20TokenX(XTOKEN).updateUser(user_);
