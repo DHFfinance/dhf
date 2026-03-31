@@ -91,6 +91,7 @@ contract NFTPresell is ERC721Holder, EmptyContract {
     error ErrorLimit();
     error ErrorNodeError();
     error ErrorWhiteList();
+    error ErrorPayTokenNotUSDT();
 
     modifier onlyBonusPool() {
         if(msg.sender != BONUSPOOL) revert ErrorCaller();
@@ -426,6 +427,7 @@ contract NFTPresell is ERC721Holder, EmptyContract {
     function setNodeConfigs(NodeConfigParam[] calldata nodeConfigs_) external onlyManager {
         uint256 len_ = nodeConfigs_.length;
         for(uint256 i=0;i<len_;i++) {
+            if (nodeConfigs_[i].payToken != USDT) revert ErrorPayTokenNotUSDT();
             nodeConfigs[nodeConfigs_[i].nodeId] = NodeConfig(
                 nodeConfigs_[i].payToken,
                 nodeConfigs_[i].payAmount,
