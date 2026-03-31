@@ -170,9 +170,11 @@ contract BonusPool is EmptyContract {
             if (!isValidProof_) revert ErrorInvalidProof();
         }
         uint256 reward_ = totalAmount_ - claimedAmt_;
-        
+
+        uint256 merkleTotalClaimed_ = merkleData.merkleTotalClaimed + reward_;
+        if (merkleTotalClaimed_ > merkleData.merkleTotalReward) revert ErrorRewardAmount();
+        merkleData.merkleTotalClaimed = merkleTotalClaimed_;
         merkleClaimedAmounts[account_] = totalAmount_;
-        merkleData.merkleTotalClaimed += reward_;
         userClaimedState[account_][merkleVersion_] = true;
 
         IERC20Token(XTOKEN).safeTransfer(account_, reward_);
