@@ -60,6 +60,7 @@ contract BonusPool is EmptyContract {
     error ErrorHoldTooLittle();
     error ErrorNoClaimable();
     error ErrorFailTransferNative();
+    error ErrorTimeWindow();
 
     modifier onlyRootManager() {
         if (!hasRole(ROOT_MANAGER, msg.sender)) revert ErrorCallerNotRootManager();
@@ -245,9 +246,10 @@ contract BonusPool is EmptyContract {
     function sendSellReward(address user_, uint256 amount_) external onlyNFTPresell {
         IERC20Token(USDT).safeTransfer(user_, amount_);
     }
-
     function updateMerkleRoot(bytes32 merkleRoot_, uint256 merkleVersion_, uint256 newTotalReward_) external onlyRootManager {
         if (merkleRoot_ == "") revert ErrorMerkleRootEmpty();
+         uint256 nextMerkleUpdateTime_ = merkleData.nextMerkleUpdateTime;
+         if (!(nextMerkleUpdateTime_ < block.timestamp && nextMerkleUpdateTime_ + 86400 > block.timestamp)) revert ErrorTimeWindow();
 
         if (newTotalReward_ < merkleData.merkleTotalReward) revert ErrorRewardAmount();
         if (merkleVersion_ <= merkleData.merkleVersion) revert ErrorVersionNumber();
@@ -256,6 +258,7 @@ contract BonusPool is EmptyContract {
         uint256 addTotalReward_ = newTotalReward_ - merkleData.merkleTotalReward;
         merkleData.merkleTotalReward = newTotalReward_;
         merkleData.merkleVersion = merkleVersion_;
+         merkleData.nextMerkleUpdateTime += 86400;
 
         emit EventUpdateMerkleRoot(merkleRoot_, merkleVersion_, newTotalReward_, addTotalReward_);
     }
