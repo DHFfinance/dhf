@@ -230,6 +230,7 @@ contract TokenX is ERC20, ERC20Permit, AccessControl {
 
     function bonusTotalSupply() public view returns(uint256) {
         return totalSupply()
+            - this.balanceOf(address(this))
             - this.balanceOf(jLpXUSDT)
             - this.balanceOf(LP_TOKEN_BNB)
             - this.balanceOf(BLACK_HOLE)
